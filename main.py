@@ -17,7 +17,7 @@ db = mongo_client[db_creds["db"]]
 
 @application.route("/")
 def hello():
-    return "Hello World! This is a test of pushing."
+    return "Hello World! This is another a test of pushing."
 
 @application.route("/nabstracts")
 def nabstracts():
