@@ -1,2 +1,2 @@
 env/
-mongo_uri.json
+db.json
