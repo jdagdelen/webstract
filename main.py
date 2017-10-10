@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask
+from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
 from pymongo import MongoClient
 
@@ -27,6 +27,15 @@ db = mongo_client[db_creds["db"]]
 # def hello():
 #     return "Hello World! This is another a test of pushing."
 
-@application.route("/")
-def nabstracts():
-    return "There are currently {:,} abstracts in the Matstract Database".format(db.abstracts.count())
+# @application.route("/")
+# def nabstracts():
+#     return "There are currently {:,} abstracts in the Matstract Database".format(db.abstracts.count())
+
+@application.route("/", methods=['GET', 'POST'])
+def index(nabstracts=None):
+	if request.method == 'POST':
+		nabstracts = "{:,}".format(db.abstracts.count())
+	render_template('index.html')
+
+
+

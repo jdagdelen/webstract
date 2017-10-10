@@ -1,0 +1,18 @@
+{% extends "bootstrap/base.html" %}
+
+<title>Welcome to the Matstract Materials Abstract Database</title>
+
+
+{% block content%}
+
+<button type="button" class="btn btn-primary btn-lg btn-block">Block level button</button>
+
+{% endblock %}
+
+<!doctype html>
+
+{% if name %}
+  <h1>There are {{ nabstracts }} in the Matstract database.</h1>
+{% else %}
+  <h1></h1>
+{% endif %}
