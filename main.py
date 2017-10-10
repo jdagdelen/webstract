@@ -35,7 +35,7 @@ db = mongo_client[db_creds["db"]]
 def index(nabstracts=None):
 	if request.method == 'POST':
 		nabstracts = "{:,}".format(db.abstracts.count())
-	render_template('index.html')
+	render_template('index.html'nabstracts=nabstracts)
 
 
 
