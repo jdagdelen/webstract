@@ -2,8 +2,15 @@ import json
 import os
 
 from flask import Flask
-from flask_bootstrap import Bootstrap
+# from flask_bootstrap import Bootstrap
 from pymongo import MongoClient
+
+
+# def create_app():
+#   app = Flask(__name__)
+#   Bootstrap(app)
+
+#   return app
 
 application = Flask(__name__)
 
@@ -16,10 +23,10 @@ mongo_client = MongoClient(
     connect=False)
 db = mongo_client[db_creds["db"]]
 
-@application.route("/")
-def hello():
-    return "Hello World! This is another a test of pushing."
+# @application.route("/")
+# def hello():
+#     return "Hello World! This is another a test of pushing."
 
-@application.route("/nabstracts")
+@application.route("/")
 def nabstracts():
     return "{} abstracts".format(db.abstracts.count())
