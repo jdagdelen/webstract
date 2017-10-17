@@ -8,17 +8,23 @@ import json
 
 dashapp = dash.Dash()
 
+# standard Dash css, fork this for a custom theme
+dashapp.css.append_css({
+    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+})
+
+
 dashapp.layout = html.Div(children=[
     html.H1(children='Matstract DB'),
 
     html.Div(children='''
-        Welcom to the Materials Abstract Database.
+        Welcome to the Materials Abstract Database.
     '''),
 
     html.Div(dcc.Input(id='input-box', type="text", )),
     html.Button('Submit', id='button'),
     html.Div(id='output-container-button',
-             children="""Enter Query [e.g. {"author":"Soren Tsarpinski"}]""")
+             children="""Enter Query [e.g. {"Authors.0":"Soren Tsarpinski"}]""")
 ])
 
 def open_db_connection():
@@ -39,10 +45,11 @@ def open_db_connection():
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('input-box', 'value')])
 def update_output(n_clicks, value):
-    db = open_db_connection()
-    entries = db.abstracts.find(json.loads(value))
-    count = entries.count()
-    return "There are {:,} entries in the matstract database that meet that query.".format(count)
+    if value:
+        db = open_db_connection()
+        entries = db.abstracts.find(json.loads(value))
+        count = entries.count()
+        return "There are {:,} entries in the matstract database that meet that query.".format(count)
 
 if __name__ == '__main__':
     dashapp.run_server(debug=True)
