@@ -5,7 +5,6 @@ import dash_html_components as html
 import os
 from pymongo import MongoClient
 import json
-import ast
 
 dashapp = dash.Dash()
 
@@ -41,7 +40,7 @@ def open_db_connection():
     [dash.dependencies.State('input-box', 'value')])
 def update_output(n_clicks, value):
     db = open_db_connection()
-    entries = db.abstracts.find(ast.literal_eval(value))
+    entries = db.abstracts.find(json.loads(value))
     count = entries.count()
     return "There are {:,} entries in the matstract database that meet that query.".format(count)
 
