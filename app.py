@@ -50,6 +50,8 @@ def update_output(n_clicks, value):
         entries = db.abstracts.find(json.loads(value))
         count = entries.count()
         return "There are {:,} entries in the matstract database that meet that query.".format(count)
+    else:
+        return "Query Syntax Error."
 
 if __name__ == '__main__':
     dashapp.run_server(debug=True)
