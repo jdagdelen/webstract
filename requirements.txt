@@ -1,12 +1,8 @@
 flask
 pymongo
-flask-appconfig>=0.10
-flask-bootstrap
-flask-nav
-flask-debug
-flask-wtf
 plotly
 dash
 dash-renderer
 dash-html-components
 dash-core-components
+pandas
