@@ -66,8 +66,8 @@ dashapp.layout = html.Div([
                     'height': '100px',
                     'float': 'right',
                     'position': 'relative',
-                    'bottom': '40px',
-                    'left': '50px'
+                    'bottom': '10px',
+                    'left': '10px'
                 },
                 ),
         html.H2('Matstract db',
