@@ -18,10 +18,14 @@ COLORSCALE = [ [0, "rgb(244,236,21)"], [0.3, "rgb(249,210,41)"], [0.4, "rgb(134,
 
 def open_db_connection():
 
-    db_creds_filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'db_atlas.json')
-    with open(db_creds_filename) as f:
-        db_creds = json.load(f)
+    # db_creds_filename = os.path.join(
+    #     os.path.dirname(os.path.abspath(__file__)), 'db_atlas.json')
+    # with open(db_creds_filename) as f:
+    #     db_creds = json.load(f)
+
+    db_creds = {"user":os.environ["ATLAS_USER"],
+                "pass":os.environ["ATLAS_USER_PASSWORD"],
+                "rest":os.environ["ATLAS_REST"]}
 
     uri = "mongodb://{user}:{pass}@{rest}".format(**db_creds)
 
