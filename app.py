@@ -8,8 +8,8 @@ import os
 import json
 from pymongo import MongoClient
 
-server = flask.Flask('matstract')
-dashapp = dash.Dash('Matstract')
+server = flask.Flask(__name__)
+dashapp = dash.Dash(__name__, server = server)
 
 BACKGROUND = 'rgb(230, 230, 230)'
 
