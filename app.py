@@ -25,7 +25,7 @@ def open_db_connection():
 
     db_creds = {"user":os.environ["ATLAS_USER"],
                 "pass":os.environ["ATLAS_USER_PASSWORD"],
-                "rest":os.environ["ATLAS_REST"]
+                "rest":os.environ["ATLAS_REST"],
                 "db":"tri_abstracts"}
 
     uri = "mongodb://{user}:{pass}@{rest}".format(**db_creds)
