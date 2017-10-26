@@ -66,7 +66,7 @@ dashapp.layout = html.Div([
                     'height': '100px',
                     'float': 'right',
                     'position': 'relative',
-                    'bottom': '10px',
+                    'bottom': '20px',
                     'left': '10px'
                 },
                 ),
