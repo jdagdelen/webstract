@@ -1,5 +1,5 @@
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
 import pandas as pd
@@ -34,27 +34,45 @@ def open_db_connection():
     db = mongo_client[db_creds["db"]]
     return db
 
-def generate_table(search, columns = ['title','authors', 'year', 'abstract'], max_rows=100):
+def generate_table(search, material='', columns = ['title','authors', 'year', 'abstract'], max_rows=100):
     if search.strip() == "":
         return html.Table()
     db = open_db_connection()
-    results = db.abstracts.find({"$text": {"$search": search}}, {"score": {"$meta": "textScore"}},
+    if material not in search:
+        search = material  + ' ' + search
+    results = db.abstracts.find({"$text": {"$search": search + material}}, {"score": {"$meta": "textScore"}},
                  ).sort([('score', {'$meta': 'textScore'})]).limit(100)
     num_results = results.count()
     df = pd.DataFrame(list(results))
     if not df.empty:
         format_authors = lambda author_list: ", ".join(author_list)
         df['authors'] = df['authors'].apply(format_authors)
+        # print([str(df.iloc[i][col]) + "as;ldkfjaspdlkfja;sldkfjas;dlfkj" for col in columns for i in range(min(len(df), max_rows))])
         return html.Table(
                 # Header
                 [html.Tr([html.Th(col) for col in columns])] +
 
                 # Body
                 [html.Tr([
-                    html.Td(df.iloc[i][col]) for col in columns
-                ]) for i in range(min(len(df), max_rows))]
+                    html.Td(highlight_material(str(df.iloc[i][col]), material)) if
+                    col == "abstract" or col == "title" else df.iloc[i][col] for col in columns
+                    # html.Td(df.iloc[i][col]) for col in columns
+                    # html.Mark(df.iloc[i][col]) for col in columns
+
+        ]) for i in range(min(len(df), max_rows))]
             )
     return html.Table("No Results")
+
+def highlight_material(body, material):
+    highlighted_phrase = html.Mark(material)
+    if material in body:
+        chopped = body.split(material)
+        newtext = []
+        for piece in chopped:
+            newtext.append(piece)
+            newtext.append(highlighted_phrase)
+        return  newtext
+    return body
 
 dashapp.layout = html.Div([
 
@@ -91,13 +109,17 @@ dashapp.layout = html.Div([
             html.Label('Search the database:'),
             dcc.Input(id='search-box',
                       value='',
-                      type='text')
+                      type='text'),
+            dcc.Input(id='material-box',
+                      placeholder='Material: e.g. "LiFePO4"',
+                      type='text'),
+            html.Button('Submit', id='button'),
             ], className='twelve columns' )
 
     ], className='row' ),
 
 
-    # Row 2: Hover Panel and Graph
+    # Row 2:
 
     html.Div([
 
@@ -117,9 +139,11 @@ dashapp.layout = html.Div([
 
 @dashapp.callback(
     Output('table-element', 'children'),
-    [Input('search-box', 'value')])
-def update_table(search):
-    table = generate_table(search)
+    # [Input('search-box', 'value')])
+    [Input('button', 'n_clicks')],
+    [State('search-box', 'value'), State('material-box', 'value')])
+def update_table(n_clicks, search, material):
+    table = generate_table(search, material)
     return table
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
