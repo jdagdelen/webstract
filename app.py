@@ -34,12 +34,13 @@ def open_db_connection():
     db = mongo_client[db_creds["db"]]
     return db
 
-def generate_table(search, material='', columns = ['title','authors', 'year', 'abstract'], max_rows=100):
+def generate_table(search, material='',  columns = ['title','authors', 'year', 'abstract'], max_rows=100):
     if search.strip() == "":
         return html.Table()
     db = open_db_connection()
-    if material not in search:
-        search = material  + ' ' + search
+    if len(material)>0:
+        if material not in search:
+            search = search + ' ' + material
     results = db.abstracts.find({"$text": {"$search": search + material}}, {"score": {"$meta": "textScore"}},
                  ).sort([('score', {'$meta': 'textScore'})]).limit(100)
     num_results = results.count()
@@ -65,7 +66,7 @@ def generate_table(search, material='', columns = ['title','authors', 'year', 'a
 
 def highlight_material(body, material):
     highlighted_phrase = html.Mark(material)
-    if material in body:
+    if len(material) > 0 and material in body:
         chopped = body.split(material)
         newtext = []
         for piece in chopped:
@@ -143,7 +144,10 @@ dashapp.layout = html.Div([
     [Input('button', 'n_clicks')],
     [State('search-box', 'value'), State('material-box', 'value')])
 def update_table(n_clicks, search, material):
-    table = generate_table(search, material)
+    if not material is None:
+        table = generate_table(search, material)
+    else:
+        table = generate_table(search)
     return table
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
