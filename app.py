@@ -48,19 +48,14 @@ def generate_table(search, material='',  columns = ['title','authors', 'year', '
     if not df.empty:
         format_authors = lambda author_list: ", ".join(author_list)
         df['authors'] = df['authors'].apply(format_authors)
-        # print([str(df.iloc[i][col]) + "as;ldkfjaspdlkfja;sldkfjas;dlfkj" for col in columns for i in range(min(len(df), max_rows))])
         return html.Table(
                 # Header
                 [html.Tr([html.Th(col) for col in columns])] +
-
                 # Body
                 [html.Tr([
                     html.Td(highlight_material(str(df.iloc[i][col]), material)) if
-                    col == "abstract" or col == "title" else df.iloc[i][col] for col in columns
-                    # html.Td(df.iloc[i][col]) for col in columns
-                    # html.Mark(df.iloc[i][col]) for col in columns
-
-        ]) for i in range(min(len(df), max_rows))]
+                    (col == "abstract" or col == "title") else html.Td(df.iloc[i][col]) for col in columns])
+                 for i in range(min(len(df), max_rows))]
             )
     return html.Table("No Results")
 
