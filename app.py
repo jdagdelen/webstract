@@ -66,9 +66,10 @@ def highlight_material(body, material):
     if len(material) > 0 and material in body:
         chopped = body.split(material)
         newtext = []
-        for piece in chopped:
+        for piece in chopped[:-1]:
             newtext.append(piece)
             newtext.append(highlighted_phrase)
+        newtext.append(chopped[-1])
         return  newtext
     return body
 
