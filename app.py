@@ -41,7 +41,8 @@ def generate_table(search, material='',  columns = ['title','authors', 'year', '
     if len(material)>0:
         if material not in search:
             search = search + ' ' + material
-    results = db.abstracts.find({"$text": {"$search": search + material}}, {"score": {"$meta": "textScore"}},
+            print("searching for {}".format(search))
+    results = db.abstracts.find({"$text": {"$search": search}}, {"score": {"$meta": "textScore"}},
                  ).sort([('score', {'$meta': 'textScore'})]).limit(100)
     num_results = results.count()
     df = pd.DataFrame(list(results))
