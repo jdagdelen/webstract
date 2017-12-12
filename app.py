@@ -17,19 +17,19 @@ COLORSCALE = [ [0, "rgb(244,236,21)"], [0.3, "rgb(249,210,41)"], [0.4, "rgb(134,
                 [0.5, "rgb(37,180,167)"], [0.65, "rgb(17,123,215)"], [1, "rgb(54,50,153)"] ]
 
 def open_db_connection():
+    try:
+        db_creds_filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'db_atlas.json')
+        with open(db_creds_filename) as f:
+            db_creds = json.load(f)
 
-    # db_creds_filename = os.path.join(
-    #     os.path.dirname(os.path.abspath(__file__)), 'db_atlas.json')
-    # with open(db_creds_filename) as f:
-    #     db_creds = json.load(f)
-
-    db_creds = {"user":os.environ["ATLAS_USER"],
-                "pass":os.environ["ATLAS_USER_PASSWORD"],
-                "rest":os.environ["ATLAS_REST"],
-                "db":"tri_abstracts"}
+    except:
+        db_creds = {"user":os.environ["ATLAS_USER"],
+                    "pass":os.environ["ATLAS_USER_PASSWORD"],
+                    "rest":os.environ["ATLAS_REST"],
+                    "db":"tri_abstracts"}
 
     uri = "mongodb://{user}:{pass}@{rest}".format(**db_creds)
-
     mongo_client = MongoClient(uri, connect=False)
     db = mongo_client[db_creds["db"]]
     return db
@@ -53,8 +53,10 @@ def generate_table(search, material='',  columns = ['title','authors', 'year', '
                 [html.Tr([html.Th(col) for col in columns])] +
                 # Body
                 [html.Tr([
-                    html.Td(highlight_material(str(df.iloc[i][col]), material)) if
-                    (col == "abstract" or col == "title") else html.Td(df.iloc[i][col]) for col in columns])
+                    html.Td(html.A(highlight_material(str(df.iloc[i][col]), material),
+                                   href=df.iloc[i]["html_link"])) if col == "title"
+                    else html.Td(highlight_material(str(df.iloc[i][col]), material)) if col == "abstract"
+                    else html.Td(df.iloc[i][col]) for col in columns])
                  for i in range(min(len(df), max_rows))]
             )
     return html.Table("No Results")
