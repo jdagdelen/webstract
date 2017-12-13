@@ -34,10 +34,11 @@ def open_db_connection():
     db = mongo_client[db_creds["db"]]
     return db
 
+db = open_db_connection()
+
 def generate_table(search, material='',  columns = ['title','authors', 'year', 'abstract'], max_rows=100):
-    if search.strip() == "":
+    if search.strip() == "" and material == "":
         return html.Table()
-    db = open_db_connection()
     if len(material)>0:
         if material not in search:
             search = search + ' ' + material
@@ -131,7 +132,7 @@ dashapp.layout = html.Div([
     ], className='row' ),
 
     html.Div([
-        html.Label('Top 100 Results:'),
+        html.Label('Top 100 Results:', id='number_results'),
         html.Table(generate_table(''), id='table-element' )
     ])
 
