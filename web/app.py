@@ -2,7 +2,7 @@ import dash
 import flask
 from flask_caching import Cache
 
-dashapp = dashapp = dash.Dash()
+dashapp = dash.Dash()
 server = dashapp.server
 
 # dashapp = dash.Dash()
