@@ -67,6 +67,6 @@ def display_page(path):
     else:
         return '404'
 
-
-if __name__ == '__main__':
-    dashapp.run_server(debug=True)
+#
+# if __name__ == '__main__':
+#     dashapp.run_server(debug=True)

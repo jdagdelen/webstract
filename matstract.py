@@ -1,4 +1,4 @@
-### Written by Olga Kononova, 2017
+### Written by Olga Kononova and John Dagdelen, 2017
 
 import re
 import collections
