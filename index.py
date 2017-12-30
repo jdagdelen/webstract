@@ -2,8 +2,8 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 
-from app import dashapp
-from apps import extract, search, trends, similar
+from web.app import dashapp
+from web.apps import search, trends, extract, similar
 
 # Header and Intro text
 header = html.Div([

@@ -1,13 +1,9 @@
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
-from plotly.graph_objs import Histogram
-import pandas as pd
-import tqdm
-import pickle
 import operator
-from app import dashapp, cache
-from apps.search import search_for_material
+from web.app import dashapp
+from web.apps.search import search_for_material
 
 
 def generate_trends_graph(search='', material=''):
@@ -15,7 +11,6 @@ def generate_trends_graph(search='', material=''):
         search = ''
     if material is None:
         material = ''
-    print("searching for '{}'".format(material))
     results = search_for_material(material=material, search=search)
 
     if len(results) > 0:
@@ -51,7 +46,10 @@ def generate_trends_graph(search='', material=''):
                 }]}
     return hist
 
-figure = generate_trends_graph(material="graphene")
+figure = {'data': [{'x': [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
+                          2011, 2012, 2013, 2014, 2015, 2016, 2017],
+                    'y': [0, 0, 1, 0, 1, 0, 0, 5, 5, 20, 76, 182, 381, 785, 724, 847, 672, 596],
+                    'name': 'Hist 1', 'type': 'scatter', 'marker': {'size': 12}}]}
 
 # The Trends app
 layout = html.Div([
@@ -59,20 +57,6 @@ layout = html.Div([
         html.Div([
             html.P('Matstract Trends: materials mentions over time.')
         ], style={'margin-left': '10px'}),
-        # html.Label('Search the database:'),
-        # dcc.Textarea(id='trends-search-box',
-        #              cols=100,
-        #              autoFocus=True,
-        #              spellCheck=True,
-        #              wrap=True,
-        #              placeholder='Paste abstract/other text here to extract materials mentions.'
-        #              ),
-        # dcc.Dropdown(id='trends-dropdown',
-        #              multi=True,
-        #              placeholder='Material: e.g. "LiFePO4"',
-        #              value=[],
-        #              # options=[{'label': i, 'value': i} for i in df['NAME'].tolist()]),
-        #              options=[]),
         dcc.Input(id='trends-material-box',
                   placeholder='Material: e.g. "graphene"',
                   value='',
@@ -86,7 +70,6 @@ layout = html.Div([
             dcc.Graph(id='trend', figure=figure)]),
     ], className='twelve columns'),
 ])
-
 
 @dashapp.callback(
     Output('trend', 'figure'),

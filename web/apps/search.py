@@ -3,7 +3,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 import pandas as pd
 
-from app import dashapp, cache
+from web.app import dashapp, cache
 from matstract import open_db_connection
 
 db = open_db_connection()

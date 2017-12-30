@@ -1,11 +1,7 @@
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
-import pandas as pd
-from flask_caching import Cache
-from pymongo import MongoClient
-from matstract import TextParser, MaterialParser
-from app import dashapp
+from web.app import dashapp
 from matstract import extract_materials
 
 
@@ -59,7 +55,5 @@ def update_extract(n_clicks, text):
         text = ''
     materials = extract_materials(text)
     materials = [m for m in materials if len(m) > 0]
-    print(materials)
-    print([{"name": m, "value": m} for m in materials])
     # return [{"name": m, "value": m} for m in materials]
     return ", ".join(materials)
