@@ -4,7 +4,6 @@ from flask_caching import Cache
 
 dashapp = dashapp = dash.Dash()
 server = dashapp.server
-dashapp.title("Matstract: Materials Extraction from Abstracts")
 
 # dashapp = dash.Dash()
 dashapp.config['suppress_callback_exceptions'] = True
