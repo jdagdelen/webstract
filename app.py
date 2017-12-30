@@ -2,9 +2,9 @@ import dash
 import flask
 from flask_caching import Cache
 
-# server = flask.Flask(__name__)
-# dashapp = dash.Dash(__name__, server=server)
-dashapp = dash.Dash()
+server = flask.Flask(__name__)
+dashapp = dash.Dash(__name__, server=server)
+# dashapp = dash.Dash()
 dashapp.config['suppress_callback_exceptions'] = True
 cache = Cache(dashapp.server, config={"CACHE_TYPE": "simple"})
 
