@@ -1,13 +1,9 @@
-from app import dashapp
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
-from apps import extract, search, trends, similar
 
-# standard Dash css, fork this for a custom theme
-# dashapp.css.append_css({
-#     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
-# })
+from app import dashapp
+from apps import extract, search, trends, similar
 
 # Header and Intro text
 header = html.Div([
@@ -51,8 +47,10 @@ header = html.Div([
     html.Br()
 ], className='row twelve columns', style={'position': 'relative', 'right': '15px'})
 
+
 dashapp.layout = html.Div([header, html.Div(search.layout, id='page-content')],
                           className='container')
+
 
 @dashapp.callback(
     Output('page-content', 'children'),
@@ -68,6 +66,7 @@ def display_page(path):
         return similar.layout
     else:
         return '404'
+
 
 if __name__ == '__main__':
     dashapp.run_server(debug=True)

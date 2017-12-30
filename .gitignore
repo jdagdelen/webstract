@@ -1,4 +1,6 @@
 env/
 db.json
 db_admin.json
+database_management.ipynb
+db_atlas.json
 *.pyc

@@ -7,3 +7,5 @@ dash-html-components
 dash-core-components
 pandas
 gunicorn
+Flask-Caching
+-e git://github.com/materialsintelligence/ChemDataExtractor#egg=chemdataextractor

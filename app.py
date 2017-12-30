@@ -1,154 +1,52 @@
 import dash
-from dash.dependencies import Input, Output, State
-import dash_html_components as html
-import dash_core_components as dcc
-import pandas as pd
 import flask
-import os
-import json
-from pymongo import MongoClient
+from flask_caching import Cache
 
-server = flask.Flask(__name__)
-dashapp = dash.Dash(__name__, server = server)
+# server = flask.Flask(__name__)
+# dashapp = dash.Dash(__name__, server=server)
+dashapp = dash.Dash()
+dashapp.config['suppress_callback_exceptions'] = True
+cache = Cache(dashapp.server, config={"CACHE_TYPE": "simple"})
 
+dashapp.css.append_css({
+    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+})
 BACKGROUND = 'rgb(230, 230, 230)'
+COLORSCALE = [[0, "rgb(244,236,21)"], [0.3, "rgb(249,210,41)"], [0.4, "rgb(134,191,118)"],
+              [0.5, "rgb(37,180,167)"], [0.65, "rgb(17,123,215)"], [1, "rgb(54,50,153)"]]
 
-COLORSCALE = [ [0, "rgb(244,236,21)"], [0.3, "rgb(249,210,41)"], [0.4, "rgb(134,191,118)"],
-                [0.5, "rgb(37,180,167)"], [0.65, "rgb(17,123,215)"], [1, "rgb(54,50,153)"] ]
+# Function to make table of abstracts mentioning term
 
-def open_db_connection():
-    try:
-        db_creds_filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'db_atlas.json')
-        with open(db_creds_filename) as f:
-            db_creds = json.load(f)
+# @dashapp.callback(
+#     Output('extract-number-results', 'children'),
+#     [Input('extract-button', 'n_clicks')],
+#     [State('extract-drowpdown', 'values')])
+# def update_extract_table(n_clicks, materials):
+#     if len(materials) > 0:
+#         table = generate_abstracts_table()
+#     if not material is None:
+#         table = generate_table(search, material)
+#     else:
+#         table = generate_table(search)
+#     return table
 
-    except:
-        db_creds = {"user":os.environ["ATLAS_USER"],
-                    "pass":os.environ["ATLAS_USER_PASSWORD"],
-                    "rest":os.environ["ATLAS_REST"],
-                    "db":"tri_abstracts"}
+# Function to update number of returned abstracts in Extract app
 
-    uri = "mongodb://{user}:{pass}@{rest}".format(**db_creds)
-    mongo_client = MongoClient(uri, connect=False)
-    db = mongo_client[db_creds["db"]]
-    return db
-
-db = open_db_connection()
-
-def generate_table(search, material='',  columns = ['title','authors', 'year', 'abstract'], max_rows=100):
-    if search.strip() == "" and material == "":
-        return html.Table()
-    if len(material)>0:
-        if material not in search:
-            search = search + ' ' + material
-            print("searching for {}".format(search))
-    results = db.abstracts.find({"$text": {"$search": search}}, {"score": {"$meta": "textScore"}},
-                 ).sort([('score', {'$meta': 'textScore'})]).limit(100)
-    num_results = results.count()
-    df = pd.DataFrame(list(results))
-    if not df.empty:
-        format_authors = lambda author_list: ", ".join(author_list)
-        df['authors'] = df['authors'].apply(format_authors)
-        return html.Table(
-                # Header
-                [html.Tr([html.Th(col) for col in columns])] +
-                # Body
-                [html.Tr([
-                    html.Td(html.A(highlight_material(str(df.iloc[i][col]), material),
-                                   href=df.iloc[i]["html_link"])) if col == "title"
-                    else html.Td(highlight_material(str(df.iloc[i][col]), material)) if col == "abstract"
-                    else html.Td(df.iloc[i][col]) for col in columns])
-                 for i in range(min(len(df), max_rows))]
-            )
-    return html.Table("No Results")
-
-def highlight_material(body, material):
-    highlighted_phrase = html.Mark(material)
-    if len(material) > 0 and material in body:
-        chopped = body.split(material)
-        newtext = []
-        for piece in chopped[:-1]:
-            newtext.append(piece)
-            newtext.append(highlighted_phrase)
-        newtext.append(chopped[-1])
-        return  newtext
-    return body
-
-dashapp.layout = html.Div([
-
-    # Row 1: Header and Intro text
-
-    html.Div([
-        html.Img(src="https://s3-us-west-1.amazonaws.com/webstract/matstract_with_text.png",
-                style={
-                    'height': '100px',
-                    'float': 'right',
-                    'position': 'relative',
-                    'bottom': '20px',
-                    'left': '10px'
-                },
-                ),
-        html.H2('Matstract db',
-                style={
-                    'position': 'relative',
-                    'top': '0px',
-                    'left': '27px',
-                    'font-family': 'Dosis',
-                    'display': 'inline',
-                    'font-size': '6.0rem',
-                    'color': '#4D637F'
-                }),
-    ], className='row twelve columns', style={'position': 'relative', 'right': '15px'}),
-
-    html.Div([
-        html.Div([
-            html.Div([
-                html.P('Welcome to the Matstract Database!')
-            ], style={'margin-left': '10px'}),
-
-            html.Label('Search the database:'),
-            dcc.Input(id='search-box',
-                      value='',
-                      type='text'),
-            dcc.Input(id='material-box',
-                      placeholder='Material: e.g. "LiFePO4"',
-                      type='text'),
-            html.Button('Submit', id='button'),
-            ], className='twelve columns' )
-
-    ], className='row' ),
-
-
-    # Row 2:
-
-    html.Div([
-
-        html.Div([
-
-        ], className='nine columns', style=dict(textAlign='center')),
-
-
-    ], className='row' ),
-
-    html.Div([
-        html.Label('Top 100 Results:', id='number_results'),
-        html.Table(generate_table(''), id='table-element' )
-    ])
-
-], className='container')
-
-@dashapp.callback(
-    Output('table-element', 'children'),
-    # [Input('search-box', 'value')])
-    [Input('button', 'n_clicks')],
-    [State('search-box', 'value'), State('material-box', 'value')])
-def update_table(n_clicks, search, material):
-    if not material is None:
-        table = generate_table(search, material)
-    else:
-        table = generate_table(search)
-    return table
+# @dashapp.callback(
+#     Output('extract-number-results', 'children'),
+#     [Input('extract-button', 'n_clicks')],
+#     [State('extract-drowpdown', 'values')])
+# def update_num_results_label(n_clicks, materials):
+#     results = get_entries_for_materials(materials)
+#     if material or search:
+#         n = len(results)
+#         if n == 0:
+#             return "No Results"
+#         elif n == 10000:
+#             n = "> 10,000"
+#         return 'Showing {} of {} results'.format(100, n)
+#     else:
+#         return ''
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
                 "//fonts.googleapis.com/css?family=Raleway:400,300,600",
@@ -158,5 +56,5 @@ external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.
 for css in external_css:
     dashapp.css.append_css({"external_url": css})
 
-if __name__ == '__main__':
-    dashapp.run_server()
+# if __name__ == '__main__':
+#     dashapp.run_server()
