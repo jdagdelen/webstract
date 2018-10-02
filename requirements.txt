@@ -1,12 +1,17 @@
+dash==0.20.0
+dash-auth==0.0.11
+dash-core-components==0.18.1
+dash-html-components==0.8.0
+dash-table-experiments==0.6.0
+dash-renderer==0.11.3
 flask
+Flask-Caching
+matplotlib
+gunicorn
+numpy
 pymongo
 plotly
-dash
-dash-renderer
-dash-html-components
-dash-core-components
 pandas
 pymatgen
-gunicorn
-Flask-Caching
--e git://github.com/materialsintelligence/ChemDataExtractor#egg=chemdataextractor
+regex
+-e git://github.com/vtshitoyan/dash-materialsintelligence#egg=dash_materialsintelligence

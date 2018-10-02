@@ -1,6 +1,29 @@
 env/
-db.json
-db_admin.json
-database_management.ipynb
-db_atlas.json
 *.pyc
+
+.idea/
+bin/
+web/static/docs/.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# mac specific #
+.DS_store
+
+# pycharm files #
+*/.idea/**
+.idea/**
+
+# Config Files
+config/db_creds.json
+
+# build related #
+*.egg-info/
+dist/
+build/
+s3*/
+.eggs/
+.cache/
+
+src/
+collect/logs/
+logs/

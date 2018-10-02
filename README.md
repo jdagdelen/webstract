@@ -1,3 +1,9 @@
-# webstract
+![Matstract logo](docs/matstract_with_text.png)
 
-This repo is depricated. All website code is now found in matstract/web.
+# Materials Rediscovered
+
+This repository contains the code for building and running the Matstract web application. 
+
+## Contributors
+
+@jdagdelen, @vtshitoyan, @lweston

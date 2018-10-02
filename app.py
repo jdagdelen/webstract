@@ -1,6 +1,7 @@
-from web.app import dashapp
+from webstract.front import app
 
-server = dashapp.server
+server = app.server
 
 if __name__ == '__main__':
-    dashapp.run_server(debug=True)
+    print("starting...")
+    app.run_server(debug=True)
